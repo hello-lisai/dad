@@ -1,0 +1,12 @@
+yourdomain.example.com {
+	reverse_proxy /v1/* https://api.chatanywhere.com.cn {
+		header_up Host api.chatanywhere.com.cn
+		header_up Authorization "{http.request.header.Authorization}"
+		header_up Authorization "sk-dkCXCbms3OF79qjoFp8DZ1dRvAcGkwqWBeoHCMhjvLN8J0PW"
+	}
+
+	file_server / {
+		root /var/wwwroot/chatgpt-web
+		index index.html
+	}
+}
