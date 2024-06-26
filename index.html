@@ -1,22 +1,61 @@
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L大人的小秘书</title>
+  <title>女友模拟器</title>
   <style>
-    .message-container {
+  body {
       display: flex;
       flex-direction: column;
-      max-height: 400px;
-      overflow-y: auto;
+      justify-content: space-between;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      
+      background-image: url('2.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
     }
+
+    @media screen and (orientation: landscape) {
+      body {
+        background-image: url('3.jpg');
+      }
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .message-container {
+  display: flex;
+  flex-direction: column;
+  height: 300px; /* 使用固定的高度 */
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  width: 70%;
+
+  position: relative;
+
+}
+
 
     .message {
       margin: 5px;
       padding: 10px;
       border-radius: 10px;
-      max-width: 70%;
     }
 
     .user-message {
@@ -29,36 +68,40 @@
       align-self: flex-start;
       background-color: #f0f0f0;
     }
-/* 横屏时的背景图片 */
-@media screen and (orientation: landscape) {
-  body {
-    background-image: url('3.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-  }
-}
 
-/* 竖屏时的背景图片 */
-@media screen and (orientation: portrait) {
-  body {
-    background-image: url('2.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-  }
-}
+    #chatForm {
+      display: flex;
+      align-items: center;
+      width: 70%;
+      margin-top: 20px;
+    }
 
+    #chatInput {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
 
+    button[type="submit"] {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>ai大人</h1>
+    <h1>女友的嘴替</h1>
     <div class="message-container" id="messageContainer"></div>
     <form id="chatForm">
-      <h2>Chat</h2>
-      <label for="chatInput">Enter your message:</label>
+    
       <input type="text" id="chatInput" name="chatInput" required>
-      <button type="submit">发送信息</button>
+      <button type="submit">发送</button>
     </form>
   </div>
 
