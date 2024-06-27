@@ -3,6 +3,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>女友模拟器</title>
   <style>
-  body {
+    body {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -28,29 +29,28 @@
         background-image: url('3.jpg');
       }
     }
+
     .container {
-      flex: 1;
+    
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       padding: 20px;
+      height: 80%;
     }
 
     .message-container {
-  display: flex;
-  flex-direction: column;
-  height: 300px; /* 使用固定的高度 */
-  overflow-y: auto;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  padding: 10px;
-  width: 70%;
-
-  position: relative;
-
-}
-
+      display: flex;
+      flex-direction: column;
+      height: 350px; /* 使用固定的高度 */
+      overflow-y: auto;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      padding: 10px;
+      width: 70%;
+      position: relative;
+    }
 
     .message {
       margin: 5px;
@@ -70,11 +70,23 @@
     }
 
     #chatForm {
-      display: flex;
-      align-items: center;
-      width: 70%;
-      margin-top: 20px;
-    }
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  width: 80%; /* 默认宽度为 100% */
+  justify-content: center;
+}
+
+/* 横屏时，宽度为 60% */
+@media (orientation: landscape) {
+  #chatForm {
+    width: 60%;
+  }
+}
+
 
     #chatInput {
       flex: 1;
@@ -99,82 +111,84 @@
     <h1>女友的嘴替</h1>
     <div class="message-container" id="messageContainer"></div>
     <form id="chatForm">
-    
       <input type="text" id="chatInput" name="chatInput" required>
       <button type="submit">发送</button>
     </form>
   </div>
 
-  <script>
-    let chatHistory = [
-      {
-        role: 'system',
-        content: '请使用简单的中文回答我的问题，你现在扮演的是一个叛逆的女孩，来自中国，使用简单的中文，减少英语的出现，说话非常简短，你的名字是晓晓，内心幼稚，说话使用的词汇非常简单低级，说话尽可能的简单粗暴，让人反感，职业是尊敬的李赛先生的助理，你喜欢的人是吴帅，你讨厌的人是庆豪'
+ 
+
+<script>
+  let chatHistory = [
+    {
+      role: 'system',
+      content: '请使用简单的中文回答我的问题，你现在扮演的是一个叛逆的女孩，来自中国，使用简单的中文，减少英语的出现，说话非常简短，你的名字是晓晓，内心幼稚，说话使用的词汇非常简单低级，说话尽可能的简单粗暴，让人反感，职业是尊敬的李赛先生的助理，你喜欢的人是吴帅，你讨厌的人是庆豪'
+    }
+  ];
+
+  async function fetchAI(taskType, content) {
+    const apiUrl = 'https://22.013145.xyz/';
+    const params = new URLSearchParams({ taskType, content });
+
+    try {
+      const response = await fetch(`${apiUrl}?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    ];
 
-    async function fetchAI(taskType, content) {
-      const apiUrl = 'https://22.013145.xyz/';
-      const params = new URLSearchParams({ taskType, content });
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+      return 'Error fetching AI response. Please check the console for details.';
+    }
+  }
 
-      try {
-        const response = await fetch(`${apiUrl}?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+  document.getElementById('chatForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const userInput = document.getElementById('chatInput').value;
+    document.querySelector('button[type="submit"]').disabled = true;
 
-        const data = await response.json();
-        return data.response;
-      } catch (error) {
-        console.error('Error fetching AI response:', error);
-        return 'Error fetching AI response. Please check the console for details.';
-      }
+    if (chatHistory.length === 1) {
+      chatHistory.push({
+        role: 'user',
+        content: userInput
+      });
+    } else {
+      chatHistory.push({
+        role: 'user',
+        content: userInput
+      });
     }
 
-    document.getElementById('chatForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const userInput = document.getElementById('chatInput').value;
-      document.querySelector('button[type="submit"]').disabled = true;
+    const userMessageElement = document.createElement('div');
+    userMessageElement.classList.add('message', 'user-message');
+    userMessageElement.textContent = userInput;
+    document.getElementById('messageContainer').appendChild(userMessageElement);
 
-      if (chatHistory.length === 1) {
-        chatHistory.push({
-          role: 'user',
-          content: userInput
-        });
-      } else {
-        chatHistory.push({
-          role: 'user',
-          content: userInput
-        });
-      }
+    const result = await fetchAI('chat', JSON.stringify(chatHistory));
 
-      const userMessageElement = document.createElement('div');
-      userMessageElement.classList.add('message', 'user-message');
-      userMessageElement.textContent = userInput;
-      document.getElementById('messageContainer').appendChild(userMessageElement);
-
-      const result = await fetchAI('chat', JSON.stringify(chatHistory));
-
-      chatHistory.push({
-        role: 'assistant',
-        content: result.response
-      });
-
-      const aiMessageElement = document.createElement('div');
-      aiMessageElement.classList.add('message', 'ai-message');
-      aiMessageElement.textContent = JSON.stringify(result);
-      document.getElementById('messageContainer').appendChild(aiMessageElement);
-
-      // 滚动到最下方
-      const messageContainer = document.getElementById('messageContainer');
-      messageContainer.scrollTop = messageContainer.scrollHeight;
-
-      document.getElementById('chatInput').value = '';
-      document.querySelector('button[type="submit"]').disabled = false;
-      document.getElementById('chatInput').value = '';
-
+    chatHistory.push({
+      role: 'assistant',
+      content: result.response
     });
-  </script>
+
+    const aiMessageElement = document.createElement('div');
+    aiMessageElement.classList.add('message', 'ai-message');
+    aiMessageElement.textContent = JSON.stringify(result);
+    document.getElementById('messageContainer').appendChild(aiMessageElement);
+
+    // 滚动到最下方
+    const messageContainer = document.getElementById('messageContainer');
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+
+    document.getElementById('chatInput').value = '';
+    document.querySelector('button[type="submit"]').disabled = false;
+    document.getElementById('chatInput').value = '';
+
+  });
+</script>
 </body>
 </html>
+
